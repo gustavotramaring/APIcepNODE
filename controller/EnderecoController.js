@@ -1,4 +1,5 @@
 const { Endereco } = require('../models');
+const axios = require('axios');
 
 exports.createEndereco = async (req, res) => {
     try {
@@ -78,8 +79,25 @@ exports.deleteEndereco = async (req, res) => {
         return res.status(404).json({ error: 'Endereço não encontrado' });
     }
         await endereco.destroy();
-        res.status(204).send(); // Sem conteúdo, pois foi deletado com sucesso
+        res.status(204).send(); 
     } catch (error) {
         res.status(500).json({ error: 'Erro ao deletar endereço, details: error.message' });
     };
+};
+
+exports.buscarCEP = async (req, res) => {
+    const { cep } = req.params; 
+    const cepRegex = /^[0-9]{5}-?[0-9]{3}$/; 
+
+    if (!cepRegex.test(cep)) {
+        return res.status(400).send('CEP inválido');
+    }
+
+    try {
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        res.json(response.data); 
+    } catch (error) {
+        console.error('Erro ao fazer requisição: ', error);
+        res.status(500).send('Erro ao consultar o CEP');
+    }
 };
