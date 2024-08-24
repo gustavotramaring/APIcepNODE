@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
-const config = require("../config/database");
-
+const config = require("../config/database.js");
 const Endereco = require("../model/Endereco");
 
 const connection = new Sequelize(config);
